@@ -29,7 +29,11 @@ trait JsonSupport extends SprayJsonSupport {
     }
   }
 
-  implicit val currencyFormat = jsonFormat1(Currency)
+  implicit val currencyFormat = new JsonFormat[Currency] {
+    override def write(obj: Currency): JsValue = JsString(obj.symbol)
+
+    override def read(json: JsValue): Currency = Currency(json.convertTo[String])
+  }
 }
 
 object JsonSupport extends JsonSupport
