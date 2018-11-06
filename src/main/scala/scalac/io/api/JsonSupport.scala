@@ -15,8 +15,6 @@ trait JsonSupport extends SprayJsonSupport {
   implicit val localDateFormat = new JsonFormat[LocalDate] {
 
     private val formatter = DateTimeFormatter.ISO_LOCAL_DATE
-    private val errorMsg =
-      s"ISO offset datetime format expected"
 
     override def write(obj: LocalDate): JsValue = JsString(formatter.format(obj))
 
@@ -24,12 +22,14 @@ trait JsonSupport extends SprayJsonSupport {
       json match {
         case JsString(localDateString) =>
           Try(LocalDate.parse(localDateString, formatter))
-            .getOrElse(deserializationError(errorMsg))
-        case _ =>
-          deserializationError(errorMsg)
+            .getOrElse(deserializationError("ISO offset datetime format expected"))
+        case other =>
+          deserializationError(s"String value expected. Got: $other")
       }
     }
   }
 
   implicit val currencyFormat = jsonFormat1(Currency)
 }
+
+object JsonSupport extends JsonSupport
