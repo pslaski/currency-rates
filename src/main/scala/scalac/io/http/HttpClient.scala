@@ -12,6 +12,7 @@ trait HttpClient {
 
 }
 
+//simple client, can use pool if needed
 class AkkaHttpClient(implicit actorSystem: ActorSystem) extends HttpClient {
   override def sendRequest(request: HttpRequest): Future[HttpResponse] = Http().singleRequest(request)
 }

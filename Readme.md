@@ -1,6 +1,6 @@
 # Currency Rates
 
-Application built as a task for Flow.io
+Simple currency rates application which is using Fixer.io API.
 
 ## Run
 Fixer.io access key is needed to start the application.
@@ -20,14 +20,16 @@ Application exposes three endpoints:
 #### Rates
 
 GET `/rates` - it returns list of rates from given currency to other currencies
-parameters:
+
+##### parameters:
+
 `base` - required - symbol of base currency 
 
 `target` - optional - symbol of target currency. If it exists, endpoint returns only rate for that currency
 
 `timestamp` - optional - historical date. If it exists, endpoint returns historical data for given day
 
-examples:
+##### examples:
 
 `/rates?base=USD` - returns list of latest rates from USD to other currencies
 
@@ -40,7 +42,7 @@ POST `publishing/<currency_symbol>/<time_interval_in_seconds>` - it registers ob
 Default webhook is `http://localhost:7091/webhooks`, but it could be changed by providing `currency-rates.publishing.webhook-uri` value or as an environment variable for `WEBHOOK_URI`.
 It can be only one observer for given currency in time.
 
-example:
+##### example:
 
 `publishing/USD/10` - will check USD rates every 10 seconds and if needed send newest rates data to the webhook
 
@@ -48,6 +50,6 @@ example:
 
 DELETE `publishing/<currency_symbol>` - it unregisters observer for given currency
 
-example:
+##### example:
 
 `publishing/USD` - will stop checking USD rates
