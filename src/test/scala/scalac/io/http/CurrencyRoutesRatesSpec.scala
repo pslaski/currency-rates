@@ -7,14 +7,16 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.scalatest.{MustMatchers, WordSpec}
 import scalac.io.Models._
-import scalac.io.currencyapi.models.CurrencyApiResponses.{CurrencyApiResponse, FailureResponse, CurrencyRatesResponse}
+import scalac.io.currencyapi.models.CurrencyApiResponses.{CurrencyApiResponse, CurrencyRatesResponse, FailureResponse}
 import scalac.io.currencyapi.services.CurrencyApiService
+import scalac.io.publisher.ObservationService
 import scalac.io.testUtils.ScalaFuturesConfigured
 import scalac.io.utils.CurrencyFixtures
 
 import scala.concurrent.Future
+import scala.concurrent.duration.FiniteDuration
 
-class CurrencyRoutesSpec extends WordSpec with ScalatestRouteTest with ScalaFuturesConfigured with MustMatchers with SprayJsonSupport {
+class CurrencyRoutesRatesSpec extends WordSpec with ScalatestRouteTest with ScalaFuturesConfigured with MustMatchers with SprayJsonSupport {
 
   import scalac.io.currencyapi.json.CurrencyApiJsonSupport._
 
@@ -26,10 +28,16 @@ class CurrencyRoutesSpec extends WordSpec with ScalatestRouteTest with ScalaFutu
     }
   }
 
-  private def createRoutes(currencyApiService: CurrencyApiService) = new CurrencyRoutes(currencyApiService)
+  private val observationService = new ObservationService {
+    override def register(base: Currency, interval: FiniteDuration): Future[Boolean] = Future.successful(true)
 
-  "CurrencyRoutes" should {
-    "return rates route success results" when {
+    override def cancel(base: Currency): Future[Boolean] = Future.successful(true)
+  }
+
+  private def createRoutes(currencyApiService: CurrencyApiService) = new CurrencyRoutes(currencyApiService, observationService)
+
+  "CurrencyRoutes.rates" should {
+    "return success results" when {
       "asking for latest rates for given currency" in new TestContext {
         override val serviceResp = CurrencyRatesResponse(localDate, timestamp, usdCurrency, rates)
         Get("/rates?base=USD") ~> route ~> check {
@@ -67,7 +75,7 @@ class CurrencyRoutesSpec extends WordSpec with ScalatestRouteTest with ScalaFutu
       }
     }
 
-    "return rates route failure results" when {
+    "return failure results" when {
       "external api return failure" in new TestContext {
         val failureMsg = "Some failure message"
         override val serviceResp = FailureResponse(failureMsg)
