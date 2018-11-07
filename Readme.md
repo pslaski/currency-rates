@@ -3,9 +3,7 @@
 Simple currency rates application which is using Fixer.io API.
 
 ## Run
-Fixer.io access key is needed to start the application.
-
-It could be provided as a configuration value for `currency-rates.fixer.access-key` or as an environment variable for `FIXER_ACCESS_KEY`.
+Fixer.io access key is needed to start the application and can be provided as a configuration value for `currency-rates.fixer.access-key` or as an environment variable for `FIXER_ACCESS_KEY`.
 
 Then start application by running:
 
@@ -23,11 +21,9 @@ GET `/rates` - it returns list of rates from given currency to other currencies
 
 ##### parameters:
 
-`base` - required - symbol of base currency 
-
-`target` - optional - symbol of target currency. If it exists, endpoint returns only rate for that currency
-
-`timestamp` - optional - historical date. If it exists, endpoint returns historical data for given day
+- `base` - required - symbol of base currency 
+- `target` - optional - symbol of target currency. If it exists, endpoint returns only rate for that currency
+- `timestamp` - optional - historical date. If it exists, endpoint returns historical data for given day
 
 ##### examples:
 
