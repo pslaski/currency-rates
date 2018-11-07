@@ -24,7 +24,6 @@ class RatesCheckerActorSpec extends TestKit(ActorSystem("RatesCheckerActorSpec")
   }
 
   private val testProbe = TestProbe()
-  private val currency = Currency("USD")
   private val interval = FiniteDuration(1, TimeUnit.SECONDS)
   private val localDate = ZonedDateTime.parse("2016-04-30T23:34:46Z").toLocalDate
   private val timestamp = Instant.now().toEpochMilli
@@ -38,7 +37,7 @@ class RatesCheckerActorSpec extends TestKit(ActorSystem("RatesCheckerActorSpec")
   }
 
   private def createTestActor(currencyApiClient: CurrencyApiClient) = {
-    system.actorOf(RatesCheckerActor.props(currency, interval, currencyApiClient, notifyService))
+    system.actorOf(RatesCheckerActor.props(usdCurrency, interval, currencyApiClient, notifyService))
   }
 
   trait CurrencyApiClientStub extends CurrencyApiClient {
