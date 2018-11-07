@@ -37,19 +37,19 @@ GET `/rates` - it returns list of rates from given currency to other currencies
 
 #### Registering Observer
 
-POST `publishing/<currency_symbol>/<time_interval_in_seconds>` - it registers observer, which will check given currency's rates with given time interval and send changed rates information to webhook address.
+POST `/publishing/<currency_symbol>/<time_interval_in_seconds>` - it registers observer, which will check given currency's rates with given time interval and send changed rates information to webhook address.
 
 Default webhook is `http://localhost:7091/webhooks`, but it could be changed by providing `currency-rates.publishing.webhook-uri` value or as an environment variable for `WEBHOOK_URI`.
 It can be only one observer for given currency in time.
 
 ##### example:
 
-`publishing/USD/10` - will check USD rates every 10 seconds and if needed send newest rates data to the webhook
+`/publishing/USD/10` - will check USD rates every 10 seconds and if needed send newest rates data to the webhook
 
 #### Unregistering Observer
 
-DELETE `publishing/<currency_symbol>` - it unregisters observer for given currency
+DELETE `/publishing/<currency_symbol>` - it unregisters observer for given currency
 
 ##### example:
 
-`publishing/USD` - will stop checking USD rates
+`/publishing/USD` - will stop checking USD rates
