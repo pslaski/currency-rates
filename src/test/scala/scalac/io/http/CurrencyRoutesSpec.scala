@@ -7,7 +7,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.scalatest.{MustMatchers, WordSpec}
 import scalac.io.Models._
-import scalac.io.currencyapi.models.CurrencyApiResponses.{CurrencyApiResponse, FailureResponse, SuccessResponse}
+import scalac.io.currencyapi.models.CurrencyApiResponses.{CurrencyApiResponse, FailureResponse, CurrencyRatesResponse}
 import scalac.io.currencyapi.services.CurrencyApiService
 import scalac.io.testUtils.ScalaFuturesConfigured
 import scalac.io.utils.CurrencyFixtures
@@ -31,38 +31,38 @@ class CurrencyRoutesSpec extends WordSpec with ScalatestRouteTest with ScalaFutu
   "CurrencyRoutes" should {
     "return rates route success results" when {
       "asking for latest rates for given currency" in new TestContext {
-        override val serviceResp = SuccessResponse(localDate, usdCurrency, rates)
+        override val serviceResp = CurrencyRatesResponse(localDate, timestamp, usdCurrency, rates)
         Get("/rates?base=USD") ~> route ~> check {
           status mustBe StatusCodes.OK
-          responseAs[SuccessResponse] mustBe serviceResp
+          responseAs[CurrencyRatesResponse] mustBe serviceResp
         }
       }
 
       "asking for latest rates for given currency and target" in new TestContext {
-        override val serviceResp = SuccessResponse(localDate, usdCurrency, shortRates)
+        override val serviceResp = CurrencyRatesResponse(localDate, timestamp, usdCurrency, shortRates)
         override val expectedTarget = Some(eurCurrency)
         Get("/rates?base=USD&target=EUR") ~> route ~> check {
           status mustBe StatusCodes.OK
-          responseAs[SuccessResponse] mustBe serviceResp
+          responseAs[CurrencyRatesResponse] mustBe serviceResp
         }
       }
 
       "asking for historical rates for given currency" in new TestContext {
         override val expectedTimestamp = Some(historicalDate)
-        override val serviceResp = SuccessResponse(historicalLocalDate, usdCurrency, rates)
+        override val serviceResp = CurrencyRatesResponse(historicalLocalDate, timestamp, usdCurrency, rates)
         Get("/rates?base=USD&timestamp=2016-04-29T14:34:46Z") ~> route ~> check {
           status mustBe StatusCodes.OK
-          responseAs[SuccessResponse] mustBe serviceResp
+          responseAs[CurrencyRatesResponse] mustBe serviceResp
         }
       }
 
       "asking for historical rates for given currency and target" in new TestContext {
         override val expectedTimestamp = Some(historicalDate)
         override val expectedTarget = Some(eurCurrency)
-        override val serviceResp = SuccessResponse(historicalLocalDate, usdCurrency, shortRates)
+        override val serviceResp = CurrencyRatesResponse(historicalLocalDate, timestamp, usdCurrency, shortRates)
         Get("/rates?base=USD&target=EUR&timestamp=2016-04-29T14:34:46Z") ~> route ~> check {
           status mustBe StatusCodes.OK
-          responseAs[SuccessResponse] mustBe serviceResp
+          responseAs[CurrencyRatesResponse] mustBe serviceResp
         }
       }
     }
@@ -97,8 +97,9 @@ class CurrencyRoutesSpec extends WordSpec with ScalatestRouteTest with ScalaFutu
   }
 
   trait TestContext extends CurrencyFixtures {
-    val timestamp = "2016-05-01T14:34:46Z"
-    val localDate = ZonedDateTime.parse(timestamp).toLocalDate
+    val timestamp = 1519296206
+    val timestampStr = "2016-05-01T14:34:46Z"
+    val localDate = ZonedDateTime.parse(timestampStr).toLocalDate
     val historicalDate = ZonedDateTime.parse("2016-04-29T14:34:46Z")
     val historicalLocalDate = historicalDate.toLocalDate
     def serviceResp: CurrencyApiResponse

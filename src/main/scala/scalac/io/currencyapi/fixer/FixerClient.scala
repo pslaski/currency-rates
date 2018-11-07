@@ -53,12 +53,12 @@ class FixerClient(fixerConfig: FixerConfig, httpClient: HttpClient)
 
   private def sendRequest(request: HttpRequest): Future[CurrencyApiResponse] = {
 
-    logger.error(s"Sending request to: ${request.uri}")
+    logger.info(s"Sending request to: ${request.uri}")
 
     httpClient.sendRequest(request).flatMap { response =>
       response.status match {
         case status if status == StatusCodes.OK =>
-          Unmarshal(response.entity).to[SuccessResponse]
+          Unmarshal(response.entity).to[CurrencyRatesResponse]
         case _ =>
           logger.debug(s"Request is not successful. Response status: ${response.status}")
           Unmarshal(response.entity).to[FailureResponse]

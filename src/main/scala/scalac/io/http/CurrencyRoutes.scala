@@ -40,7 +40,7 @@ class CurrencyRoutes(currencyApiService: CurrencyApiService)
         onComplete(currencyApiResponseF) {
           case Success(currencyApiResponse) =>
             currencyApiResponse match {
-              case successResp: SuccessResponse =>
+              case successResp: CurrencyRatesResponse =>
                 complete(successResp)
 
               case failureResp: FailureResponse =>

@@ -6,8 +6,10 @@ import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import scalac.io.config.CurrencyRatesConfig
+import scalac.io.currencyapi.client.CurrencyApiClient
 import scalac.io.currencyapi.fixer.{FixerClient, FixerService}
-import scalac.io.http.{AkkaHttpClient, CurrencyRoutes}
+import scalac.io.currencyapi.services.CurrencyApiService
+import scalac.io.http.{AkkaHttpClient, CurrencyRoutes, HttpClient}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -25,11 +27,11 @@ object Main extends App {
 
   private val fixerConfig = CurrencyRatesConfig.getFixerConfig(config)
 
-  private val httpClient = new AkkaHttpClient()
+  private val httpClient: HttpClient = new AkkaHttpClient()
 
-  private val fixerClient = new FixerClient(fixerConfig, httpClient)
+  private val fixerClient: CurrencyApiClient = new FixerClient(fixerConfig, httpClient)
 
-  private val fixerService = new FixerService(fixerClient)
+  private val fixerService: CurrencyApiService = new FixerService(fixerClient)
 
   private val currencyRoutes = new CurrencyRoutes(fixerService).routes
 

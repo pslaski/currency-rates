@@ -6,7 +6,7 @@ import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model._
 import org.scalatest.MustMatchers
 import scalac.io.config.Models.FixerConfig
-import scalac.io.currencyapi.models.CurrencyApiResponses.{CurrencyApiResponse, FailureResponse, SuccessResponse}
+import scalac.io.currencyapi.models.CurrencyApiResponses.{CurrencyApiResponse, FailureResponse, CurrencyRatesResponse}
 import scalac.io.http.HttpClient
 import scalac.io.testUtils.{ActorSpec, ScalaFuturesConfigured}
 import scalac.io.utils.CurrencyFixtures
@@ -47,7 +47,11 @@ class FixerClientSpec extends ActorSpec("fixer-client-system") with MustMatchers
 
       override val resp = fixerClient.getLatestRates(usdCurrency).futureValue
 
-      override val expectedResp = SuccessResponse(date = LocalDate.parse("2018-11-05"), base = usdCurrency, rates = rates)
+      override val expectedResp = CurrencyRatesResponse(
+        date = LocalDate.parse("2018-11-05"),
+        timestamp = 1519296206,
+        base = usdCurrency,
+        rates = rates)
 
       assertResponses()
     }
@@ -70,7 +74,11 @@ class FixerClientSpec extends ActorSpec("fixer-client-system") with MustMatchers
 
       override val resp = fixerClient.getLatestRates(usdCurrency, Some(eurCurrency)).futureValue
 
-      override val expectedResp = SuccessResponse(date = LocalDate.parse("2018-11-05"), base = usdCurrency, rates = shortRates)
+      override val expectedResp = CurrencyRatesResponse(
+        date = LocalDate.parse("2018-11-05"),
+        timestamp = 1519296206,
+        base = usdCurrency,
+        rates = shortRates)
 
       assertResponses()
     }
@@ -96,7 +104,11 @@ class FixerClientSpec extends ActorSpec("fixer-client-system") with MustMatchers
 
       override val resp = fixerClient.getHistoricalRates(usdCurrency, timestamp).futureValue
 
-      override val expectedResp = SuccessResponse(date = LocalDate.parse("2013-12-24"), base = usdCurrency, rates = rates)
+      override val expectedResp = CurrencyRatesResponse(
+        date = LocalDate.parse("2013-12-24"),
+        timestamp = 1387929599,
+        base = usdCurrency,
+        rates = rates)
 
       assertResponses()
     }
@@ -120,7 +132,11 @@ class FixerClientSpec extends ActorSpec("fixer-client-system") with MustMatchers
 
       override val resp = fixerClient.getHistoricalRates(usdCurrency, timestamp, Some(eurCurrency)).futureValue
 
-      override val expectedResp = SuccessResponse(date = LocalDate.parse("2013-12-24"), base = usdCurrency, rates = shortRates)
+      override val expectedResp = CurrencyRatesResponse(
+        date = LocalDate.parse("2013-12-24"),
+        timestamp = 1387929599,
+        base = usdCurrency,
+        rates = shortRates)
 
       assertResponses()
     }

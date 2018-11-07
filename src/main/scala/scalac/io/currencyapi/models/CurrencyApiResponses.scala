@@ -8,7 +8,7 @@ object CurrencyApiResponses {
 
   sealed trait CurrencyApiResponse
 
-  case class SuccessResponse(date: LocalDate, base: Currency, rates: CurrencyRates) extends CurrencyApiResponse
+  case class CurrencyRatesResponse(date: LocalDate, timestamp: Long, base: Currency, rates: CurrencyRates) extends CurrencyApiResponse
 
   case class FailureResponse(message: String) extends CurrencyApiResponse
 
