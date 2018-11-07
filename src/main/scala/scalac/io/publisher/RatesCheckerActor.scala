@@ -57,7 +57,7 @@ class RatesCheckerActor(base: Currency,
   }
 
   private def isRatesChanged(ratesFromApi: CurrencyRatesResponse): Boolean = {
-    latestRates.exists { savedRates =>
+    latestRates.forall { savedRates =>
       savedRates.rates != ratesFromApi.rates
     }
   }

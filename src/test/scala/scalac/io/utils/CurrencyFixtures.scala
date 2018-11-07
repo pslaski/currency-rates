@@ -1,6 +1,6 @@
 package scalac.io.utils
 
-import scalac.io.Models.Currency
+import scalac.io.Models.{Currency, CurrencyRates}
 
 trait CurrencyFixtures {
 
@@ -9,7 +9,7 @@ trait CurrencyFixtures {
   val jpyCurrency = Currency("JPY")
   val eurCurrency = Currency("EUR")
 
-  val rates = Map(
+  val rates: CurrencyRates = Map(
     gbpCurrency -> BigDecimal(0.72007),
     jpyCurrency -> BigDecimal(107.346001),
     eurCurrency -> BigDecimal(0.813399)

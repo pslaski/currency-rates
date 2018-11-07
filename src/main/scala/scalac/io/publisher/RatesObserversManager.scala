@@ -22,6 +22,11 @@ class RatesObserversManager(currencyApiClient: CurrencyApiClient,
 
   private val registeredObservers: mutable.Map[Currency, ActorRef] = mutable.Map.empty
 
+  override def postStop(): Unit = {
+    registeredObservers.values.foreach(context.stop)
+    super.postStop()
+  }
+
   override def receive: Receive = {
     case Register(base, interval) =>
       if(registeredObservers.contains(base)) {
