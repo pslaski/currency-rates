@@ -10,7 +10,7 @@ import scalac.io.currencyapi.client.CurrencyApiClient
 import scalac.io.currencyapi.fixer.{FixerClient, FixerService}
 import scalac.io.currencyapi.services.CurrencyApiService
 import scalac.io.http.{AkkaHttpClient, CurrencyRoutes, HttpClient}
-import scalac.io.publisher.{ObservationService, ObservationServiceImpl, RatesChangeNotifierService, RatesChangeNotifierServiceImpl}
+import scalac.io.publisher._
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -34,7 +34,8 @@ object Main extends App {
   private val fixerService: CurrencyApiService = new FixerService(fixerClient)
 
   private val ratesChangeNotifierService: RatesChangeNotifierService = new RatesChangeNotifierServiceImpl(httpClient, publishingConfig.webhookUri)
-  private val observationService: ObservationService = new ObservationServiceImpl(fixerClient, ratesChangeNotifierService)
+  private val ratesObserversManager = system.actorOf(RatesObserversManager.props(fixerClient, ratesChangeNotifierService))
+  private val observationService: ObservationService = new ObservationServiceImpl(ratesObserversManager)
 
   private val currencyRoutes = new CurrencyRoutes(fixerService, observationService).routes
 
