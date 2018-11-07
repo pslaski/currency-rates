@@ -1,4 +1,4 @@
-package scalac.io.utils
+package scalac.io.testUtils
 
 import org.scalatest.concurrent.ScalaFutures
 

@@ -5,25 +5,26 @@ import java.time.{LocalDate, ZonedDateTime}
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model._
 import org.scalatest.MustMatchers
-import scalac.io.Models.Currency
+import scalac.io.config.Models.FixerConfig
 import scalac.io.currencyapi.models.CurrencyApiResponses.{CurrencyApiResponse, FailureResponse, SuccessResponse}
 import scalac.io.http.HttpClient
-import scalac.io.utils.{ActorSpec, ScalaFuturesConfigured}
+import scalac.io.testUtils.{ActorSpec, ScalaFuturesConfigured}
+import scalac.io.utils.CurrencyFixtures
 import spray.json._
 
 import scala.concurrent.Future
 
 class FixerClientSpec extends ActorSpec("fixer-client-system") with MustMatchers with ScalaFuturesConfigured {
 
-  private val baseUri = Uri./
   private val accessKey = "ACCESS_TOKEN"
+  private val fixerConfig = FixerConfig(accessKey, "/")
 
   private def createHttpClient(expectedReqUri: Uri, response: HttpResponse): HttpClient = (request: HttpRequest) => {
     assert(request.uri == expectedReqUri, s"Request uri not match an expected. Requested: [${request.uri}], expected: [$expectedReqUri]")
     Future.successful(response)
   }
 
-  private def createFixerClient(httpClient: HttpClient): FixerClient = new FixerClient(baseUri, accessKey, httpClient)
+  private def createFixerClient(httpClient: HttpClient): FixerClient = new FixerClient(fixerConfig, httpClient)
 
   "FixerClient" should {
     "return all latest rates" in new LatestTestContext {
@@ -157,20 +158,7 @@ class FixerClientSpec extends ActorSpec("fixer-client-system") with MustMatchers
     }
   }
 
-  trait LatestTestContext {
-    val usdCurrency = Currency("USD")
-    val gbpCurrency = Currency("GBP")
-    val jpyCurrency = Currency("JPY")
-    val eurCurrency = Currency("EUR")
-
-    val rates = Map(
-      gbpCurrency -> BigDecimal(0.72007),
-      jpyCurrency -> BigDecimal(107.346001),
-      eurCurrency -> BigDecimal(0.813399)
-    )
-
-    val shortRates = rates -- Seq(gbpCurrency, jpyCurrency)
-
+  trait LatestTestContext extends CurrencyFixtures {
     def jsonStr: String
     lazy val json = jsonStr.parseJson
 

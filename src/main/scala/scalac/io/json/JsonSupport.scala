@@ -1,15 +1,14 @@
-package scalac.io.api
+package scalac.io.json
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import scalac.io.Models.Currency
 import spray.json.{JsString, JsValue, JsonFormat, deserializationError}
 
 import scala.util.Try
 
-trait JsonSupport extends SprayJsonSupport {
+trait JsonSupport {
   import spray.json.DefaultJsonProtocol._
 
   implicit val localDateFormat = new JsonFormat[LocalDate] {

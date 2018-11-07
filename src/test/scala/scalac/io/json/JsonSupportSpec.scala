@@ -1,4 +1,4 @@
-package scalac.io.api
+package scalac.io.json
 
 import java.time.LocalDate
 

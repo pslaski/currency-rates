@@ -9,17 +9,22 @@ import akka.http.scaladsl.model.{HttpRequest, StatusCodes, Uri}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import scalac.io.Models._
+import scalac.io.config.Models.FixerConfig
 import scalac.io.currencyapi.client.CurrencyApiClient
+import scalac.io.currencyapi.json.CurrencyApiJsonSupport
 import scalac.io.currencyapi.models.CurrencyApiResponses._
 import scalac.io.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FixerClient(baseUri: Uri, accessKey: String, httpClient: HttpClient)
+class FixerClient(fixerConfig: FixerConfig, httpClient: HttpClient)
                  (implicit actorSystem: ActorSystem, mat: Materializer, ec: ExecutionContext)
-  extends CurrencyApiClient with JsonSupport {
+  extends CurrencyApiClient with FixerJsonSupport with CurrencyApiJsonSupport {
 
   val logger = Logging(actorSystem, classOf[FixerClient])
+
+  private val baseUri = Uri(fixerConfig.baseUri)
+  private val accessKey = fixerConfig.accessKey
 
   override def getLatestRates(base: Currency, target: Option[Currency]): Future[CurrencyApiResponse] = {
     val uri = baseUri
@@ -48,7 +53,7 @@ class FixerClient(baseUri: Uri, accessKey: String, httpClient: HttpClient)
 
   private def sendRequest(request: HttpRequest): Future[CurrencyApiResponse] = {
 
-    logger.debug(s"Sending request to: ${request.uri}")
+    logger.error(s"Sending request to: ${request.uri}")
 
     httpClient.sendRequest(request).flatMap { response =>
       response.status match {

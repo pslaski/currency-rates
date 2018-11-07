@@ -1,15 +1,12 @@
 package scalac.io.currencyapi.fixer
 
-import java.time.LocalDate
-
 import org.scalatest.{MustMatchers, WordSpec}
 import scalac.io.currencyapi.models.CurrencyApiResponses.FailureResponse
-import spray.json.{DeserializationException, JsNull, JsString}
-import spray.json._
+import spray.json.{DeserializationException, JsString, _}
 
-class JsonSupportSpec extends WordSpec with MustMatchers {
+class FixerJsonSupportSpec extends WordSpec with MustMatchers {
 
-  private val failureResponseReader = JsonSupport.failureResponseReader
+  private val failureResponseReader = FixerJsonSupport.failureResponseReader
 
   "failureResponseReader" should {
     "read jsValue as failure response" in {

@@ -1,15 +1,12 @@
 package scalac.io.currencyapi.fixer
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import scalac.io._
-import scalac.io.currencyapi.models.CurrencyApiResponses.{FailureResponse, SuccessResponse}
+import scalac.io.currencyapi.models.CurrencyApiResponses.FailureResponse
 import spray.json._
 
-trait JsonSupport extends SprayJsonSupport {
+trait FixerJsonSupport extends SprayJsonSupport {
   import spray.json.DefaultJsonProtocol._
-  import api.JsonSupport._
 
-  implicit val successResponseFormat = jsonFormat3(SuccessResponse)
   implicit val failureResponseReader = new RootJsonReader[FailureResponse] {
     override def read(json: JsValue): FailureResponse = {
       val errorMsg = json
@@ -28,4 +25,4 @@ trait JsonSupport extends SprayJsonSupport {
   }
 }
 
-object JsonSupport extends JsonSupport
+object FixerJsonSupport extends FixerJsonSupport
